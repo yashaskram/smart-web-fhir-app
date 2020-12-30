@@ -7,14 +7,14 @@
     <title>Static Template</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" type="text/css" href="fhir-extract.css" />
-    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <script src="fhir-client.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/node-uuid@1.4.8/uuid.min.js"></script>
     <script src="app.js"></script>
 
     <script>
-      //var smart_messaging_origin = "";
-      var smart_messaging_origin = window.sessionStorage.smartMessagingOrigin;
+      var smart_messaging_origin = "";
+      //var smart_messaging_origin = window.sessionStorage.smartMessagingOrigin;
 
       var SMART = {
         messaging: {
@@ -297,18 +297,38 @@
   </head>
   <body>
     <div id="main" style="display: inline-table;">
+      <div id="errors"></div>
+      <div id="holder">
+        <table>
+          <tr>
+            <th>First Name:</th>
+            <td id="fname"></td>
+          </tr>
+          <tr>
+            <th>Last Name:</th>
+            <td id="lname"></td>
+          </tr>
+          <tr>
+            <th>Gender:</th>
+            <td id="gender"></td>
+          </tr>
+          <tr>
+            <th>Date of Birth:</th>
+            <td id="birthdate"></td>
+          </tr>
+        </table>
+      </div>
       <script src="fhir-extract.js"></script>
 
       <script>
         extractData().then(
-          //Display Patient Demographics and Observations if extractData was success
+          //Display Patient Demographics if extractData was success
           function (p) {
             drawVisualization(p);
           },
 
           //Display "Failed to call FHIR Service" if extractData failed
           function () {
-            $("#loading").hide();
             $("#errors").html("<p> Failed to call FHIR Service </p>");
           }
         );
