@@ -19,7 +19,7 @@ body {
 }
 
 pre {
-  border: 1px solid #DDD;
+  border: 1px solid #ddd;
   position: absolute;
   top: 14px;
   bottom: 0px;
@@ -82,7 +82,7 @@ pre {
 /* Dark theme ----------------------------------------- */
 body.dark {
   background: rgb(27, 27, 27);
-  color: #CCC;
+  color: #ccc;
 }
 
 body.dark pre {

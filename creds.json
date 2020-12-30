@@ -1,0 +1,46 @@
+{
+  "issuers": [
+    {
+      "client_id": "e152de7f-6804-49af-88cd-d05401e35429",
+      "issuer": "https://api.logicahealth.org/SmartMessagingAlt/data",
+      "scope": "patient/Observation.read launch patient/Patient.read online_access openid profile",
+      "redirect_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/index.html",
+      "launch_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/launch.html"
+    },
+    {
+      "client_id": "d40177ff-08ba-4b8b-8c47-cb6a55b17c1d",
+      "issuer": "https://api.logicahealth.org/SmartMessagingProtot/data",
+      "scope": "patient/Observation.read launch patient/Patient.read online_access openid profile",
+      "redirect_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/index.html",
+      "launch_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/launch.html"
+    },
+    {
+      "client_id": "e9757afe-368b-469a-a4e4-0820f05f216a",
+      "issuer": "https://api.logicahealth.org/utdhstage/data",
+      "scope": "patient/Observation.read launch patient/Patient.read online_access openid profile",
+      "redirect_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/index.html",
+      "launch_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/launch.html"
+    },
+    {
+      "client_id": "bde724df-c57a-4875-9807-cc7e84660848",
+      "issuer": "https://fhir-ehr.sandboxcerner.com/dstu2/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca",
+      "scope": "patient/Observation.read launch patient/Patient.read online_access openid profile",
+      "redirect_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/index.html",
+      "launch_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/launch.html"
+    },
+    {
+      "client_id": "uptodate",
+      "issuer": "https://fhirsandbox2.tsysinteropsvcs.net:8100/sites/123",
+      "scope": "patient/Observation.read launch patient/Patient.read online_access openid profile",
+      "redirect_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/index.html",
+      "launch_uri": "https://s3.amazonaws.com/prototype-smart-msg.wolterskluwer.com/launch.html"
+    },
+    {
+      "client_id": "16c5fe5d-b64b-42db-8e7e-c73fa2807475",
+      "issuer": "https://api.logicahealth.org/SmartMessagingProtot/data",
+      "scope": "patient/Observation.read launch patient/Patient.read online_access openid profile",
+      "redirect_uri": "https://yl7f7.csb.app/index.html",
+      "launch_uri": "https://yl7f7.csb.app/launch.html"
+    }
+  ]
+}

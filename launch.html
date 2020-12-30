@@ -1,42 +1,58 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Static Template</title>
-        <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
-    </head>
-    <body>
-        <script>
-          var url = new URL(location.href);
-          if (!url.searchParams.has("launch") || !url.searchParams.has("iss")) {
-            url.searchParams.set("launch", "eyJhIjoiMSIsImciOiIxIn0");
-            url.searchParams.set("iss", "https://launch.smarthealthit.org/v/r3/fhir");
-            document.body.innerHTML = '<a href="' + url.href + '">Click here to simulate EHR launch</a>';
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <script>
+      /**
+       * @param p - the parameter in the URL to return
+       * @return an array containing values for the parameter with the given name; if nothing find, returns empty string
+       */
+      function urlParam(p) {
+        var query = location.search.substr(1);
+        var data = query.split("&");
+        var result = new Array();
+
+        for (var i = 0; i < data.length; i++) {
+          var item = data[i].split("=");
+          if (item[0] === p) {
+            result.push(decodeURIComponent(item[1]));
           }
-          else {
+        }
+
+        if (result.length > 0) return result;
+        else return "";
+      }
+
+      //console.log("COOKIE_ISS", $.cookie("issuer"));
+
+      var iss = urlParam("iss");
+      console.log("ISS", iss);
+
+      if (iss == "")
+        iss = "https://api.logicahealth.org/SmartMessagingProtot/data";
+
+      $.getJSON("creds.json", function (creds) {
+        //console.log(creds);
+        $.each(creds.issuers, function (i, info) {
+          //console.log("CID", info.issuer);
+          if (info.issuer == iss) {
+            console.log(info);
+
             FHIR.oauth2.authorize({
-
-              // The client_id that you should have obtained after registering a client at
-              // the EHR.
-              clientId: "my_web_app",
-
-              // The scopes that you request from the EHR
-              scope: [
-                "launch",           // Get the launch context in EHR launch mode
-                "openid fhirUser",  // Get the current user
-                "patient/*.read",   // Read patient data
-              ].join(" "),
-
-              // Typically, if your redirectUri points to the root of the current directory
-              // (where the launchUri is), you can omit this option because the default
-              // value is ".". However, some servers (like this one) do not support directory
-              // indexes so "." and "./" will not automatically map to the "index.html" file
-              // in that directory.
-              redirectUri: "index.html"
+              client_id: info.client_id,
+              redirect_uri: info.redirect_uri,
+              scope: info.scope
             });
           }
-        </script>
-    </body>
+        });
+      });
+    </script>
+  </body>
 </html>

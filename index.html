@@ -1,38 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Static Template</title>
-        <link rel="stylesheet" href="style.css">
-        <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
-        <script src="app.js"></script>
-    </head>
-    <body>
-        <div class="cell top-left">
-            <h4>Current Patient</h4>
-            <pre id="patient"></pre>
-        </div>
-        <div class="cell top-center">
-            <h4>Current User</h4>
-            <pre id="user"></pre>
-        </div>
-        <div class="cell top-right">
-            <h4>Current Encounter</h4>
-            <pre id="encounter"></pre>
-        </div>
-        <div class="cell bottom">
-            <h4>Main Output</h4>
-            <pre id="output">Loading...</pre>
-        </div>
-        <script type="text/javascript">
-            FHIR.oauth2.ready().then(function(client) {
-                var app = new App(client);
-                App.prototype.setLabel("output", "Conformance Statement");
-                app.renderContext();
-                app.request("metadata");
-            }).catch(createRenderer("output"));
-        </script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="fhir-extract.css" />
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/node-uuid@1.4.8/uuid.min.js"></script>
+    <script src="app.js"></script>
+
+    <script>
+      //var smart_messaging_origin = "";
+      var smart_messaging_origin = window.sessionStorage.smartMessagingOrigin;
+
+      var SMART = {
+        messaging: {
+          send: function (msgType, pl) {
+            if (pl == "SR") {
+              var payload = {
+                resource: {
+                  resourceType: "ServiceRequest",
+                  id: "123456",
+                  text: {
+                    status: "generated",
+                    div:
+                      '<div xmlns="http://www.w3.org/1999/xhtml">To be added</div>'
+                  },
+                  status: "completed",
+                  intent: "order",
+                  category: [
+                    {
+                      coding: [
+                        {
+                          system: "http://snomed.info/sct",
+                          code: "103693007",
+                          display: "Diagnostic procedure (procedure)"
+                        }
+                      ],
+                      text: "Diagnostics Procedure"
+                    }
+                  ],
+                  code: {
+                    coding: [
+                      {
+                        system: "http://snomed.info/sct",
+                        code: "303653007",
+                        display: "Computed tomography of head"
+                      }
+                    ]
+                  },
+                  subject: {
+                    reference: "Patient/SMART-1288992"
+                  }
+                }
+              };
+            } else if (pl == "PR") {
+              var payload = {
+                resource: {
+                  resourceType: "ProcedureRequest",
+                  id: "123457",
+                  text: {
+                    status: "generated",
+                    div:
+                      "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: SMART-1288992</p><p><b>status</b>: active</p><p><b>intent</b>: original-order</p><p><b>code</b>: Chest CT <span>(Details : {LOINC code '24627-2' = 'Chest CT)</span></p><p><b>subject</b>: <a>Patient/dicom</a></p><p><b>occurrence</b>: 08/05/2013 9:33:27 AM</p><h3>Requesters</h3><table><tr><td>-</td><td><b>Agent</b></td></tr><tr><td>*</td><td><a>Dr. Adam Careful</a></td></tr></table><p><b>reasonCode</b>: Check for metastatic disease <span>(Details )</span></p></div>"
+                  },
+                  status: "active",
+                  intent: "original-order",
+                  code: {
+                    coding: [
+                      {
+                        system: "http://loinc.org",
+                        code: "24627-2"
+                      }
+                    ],
+                    text: "Generic Procedure Request"
+                  },
+                  subject: {
+                    reference: "Patient/SMART-1288992"
+                  },
+                  occurrenceDateTime: "2013-05-08T09:33:27+07:00",
+                  requester: {
+                    agent: {
+                      reference: "Practitioner/SMART-1234",
+                      display: "Dr. John Smith"
+                    }
+                  },
+                  reasonCode: [
+                    {
+                      text: "Check for heart disease"
+                    }
+                  ]
+                }
+              };
+            } else if (pl == "MO") {
+              var payload = {
+                resource: {
+                  resourceType: "MedicationOrder",
+                  dateWritten: "2019-09-13",
+                  status: "active",
+                  id: "111s-222-111B",
+                  patient: {
+                    display: "Jason Argonaut",
+                    reference: "Patient/123456"
+                  },
+                  prescriber: {
+                    display: "Provider, MD",
+                    reference: "Practitioner/4567"
+                  },
+                  medicationCodeableConcept: {
+                    coding: [
+                      {
+                        system: "http://www.nlm.nih.gov/research/umls/rxnorm",
+                        code: "855312",
+                        display: "Warfarin Sodium 2.5 MG Oral Tablet",
+                        userSelected: false
+                      }
+                    ],
+                    text: "Warfarin Sodium 2.5 MG Oral Tablet"
+                  },
+                  dosageInstruction: [
+                    {
+                      text:
+                        "Take warfarin dose of 2.5 mg per day on days one and two",
+                      asNeededBoolean: false,
+                      route: {
+                        text: "Oral",
+                        coding: [
+                          {
+                            system: "http://snomed.info/sct",
+                            code: "26643006",
+                            display: "Oral route"
+                          }
+                        ]
+                      },
+                      timing: {
+                        repeat: {
+                          frequency: 2,
+                          period: 1,
+                          periodUnits: "d",
+                          boundsPeriod: {
+                            start: "2019-09-13T00:00:00Z",
+                            end: "2019-09-15T00:00:00Z"
+                          }
+                        }
+                      },
+                      doseQuantity: {
+                        value: 2.5,
+                        unit: "mg",
+                        code: "mg",
+                        system: "http://unitsofmeasure.org"
+                      }
+                    }
+                  ]
+                }
+              };
+            } else {
+              payload = pl;
+            }
+
+            var msgStructure = {
+              authentication: {},
+              messageId: uuid(),
+              messageType: msgType,
+              payload: payload
+            };
+
+            targetWindow =
+              window.parent != window.top ? window.parent : window.opener;
+            if (!targetWindow) {
+              targetWindow = window.parent;
+            }
+
+            console.log("Target Opener", targetWindow);
+            console.log("Sending Message", msgStructure);
+            console.log("Smart Messaging Orgin", smart_messaging_origin);
+
+            targetWindow.postMessage(msgStructure, smart_messaging_origin);
+
+            return;
+          }
+        }
+      };
+
+      function sendMessage(msgType, pl) {
+        try {
+          SMART.messaging.send(msgType, pl);
+        } catch (err) {
+          console.log("Message Send Failure: ", err);
+        }
+      }
+
+      function sendUIMessage(msgType, activityType) {
+        try {
+          SMART.messaging.send(msgType, {
+            activityType: activityType,
+            activityParameters: {
+              // Each activity defines its optional+required params
+              patient: "123"
+            }
+          });
+        } catch (err) {
+          console.log("UI Message Send Failure: ", err);
+        }
+      }
+
+      function sendUIDone(activityType) {
+        SMART.messaging.send("ui.done", {
+          activityType: activityType,
+          activityParameters: {
+            // Each activity defines its optional+required params
+            patient: "123"
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="main" style="display: block;">
+      <script src="fhir-extract.js"></script>
+
+      <script>
+        extractData().then(
+          //Display Patient Demographics and Observations if extractData was success
+          function (p) {
+            drawVisualization(p);
+          },
+
+          //Display "Failed to call FHIR Service" if extractData failed
+          function () {
+            $("#loading").hide();
+            $("#errors").html("<p> Failed to call FHIR Service </p>");
+          }
+        );
+      </script>
+      <br /><br />
+      <button
+        type="button"
+        onclick="javascript:sendMessage('scratchpad.create', 'SR')"
+      >
+        Send ServiceRequest scratchpad.create
+      </button>
+      <button
+        type="button"
+        onclick="javascript:sendMessage('scratchpad.create', 'PR')"
+      >
+        Send ProcedureRequest scratchpad.create
+      </button>
+      <button
+        type="button"
+        onclick="javascript:sendMessage('scratchpad.create', 'MO')"
+      >
+        Send MedicationOrder scratchpad.create
+      </button>
+      <button type="button" onclick="javascript:sendUIDone('probelm-list')">
+        Send ui.done
+      </button>
+      <br /><br />
+
+      <div id="message"></div>
+    </div>
+  </body>
 </html>
