@@ -216,10 +216,87 @@
           }
         });
       }
+
+      var whitelisted_urls = [
+        "http://s3.amazonaws.com",
+        "https://s3.amazonaws.com",
+        "http://cds-hooks-decisions.herokuapp.com",
+        "https://cds-hooks-decisions.herokuapp.com",
+        "http://prototypes.utdlab.com",
+        "https://prototypes.utdlab.com",
+        "https://sandbox.cds-hooks.org",
+        "http://sandbox.cds-hooks.org",
+        "https://yl7f7.csb.app"
+      ];
+      function receiveMessage(event) {
+        if (!whitelisted_urls.includes(event.origin)) {
+          console.log(
+            "Receiving message from: " +
+              event.origin +
+              " which is not in the approved sender list."
+          );
+          return;
+        }
+
+        var msgData = JSON.stringify(event.data);
+        console.log("Receiving message from " + event.origin, msgData);
+        var para = document.createElement("P");
+        var t = document.createTextNode(event.origin + ": " + msgData);
+        para.appendChild(t);
+        document.getElementById("message").appendChild(para);
+
+        if (event.origin == "https://prototypes.utdlab.com") {
+          msgData = JSON.parse(msgData);
+          console.log("Pathway Message", msgData);
+          var pl = {
+            resource: {
+              resourceType: "ProcedureRequest",
+              id: "123-111-112421",
+              text: {
+                status: "generated",
+                div: "<div>Request for INR on day 3</div>"
+              },
+              subject: {
+                reference: "Patient/123456"
+              },
+              code: {
+                coding: [
+                  {
+                    system: "http://loinc.org",
+                    code: "6301-6",
+                    display: "INR in Platelet poor plasma by Coagulation assay"
+                  }
+                ],
+                text: "INR"
+              },
+              reasonCodeableConcept: {
+                coding: [
+                  {
+                    system: "http://snomed.info/sct",
+                    code: "869711000000105",
+                    display: "Anticoagulation care pathway"
+                  }
+                ]
+              },
+              scheduledDateTime: "2019-09-15",
+              encounter: {
+                reference: "Encounter/111"
+              },
+              status: "proposed",
+              orderedOn: "2019-09-13",
+              priority: "routine"
+            }
+          };
+
+          sendMessage("scratchpad.create", pl);
+        }
+      }
+
+      window.addEventListener("message", receiveMessage, false);
     </script>
   </head>
   <body>
-    <div id="main" style="display: block;">
+    <div id="main" style="display: inline-table;">
       <script src="fhir-extract.js"></script>
 
       <script>
@@ -236,7 +313,7 @@
           }
         );
       </script>
-      <br /><br />
+
       <button
         type="button"
         onclick="javascript:sendMessage('scratchpad.create', 'SR')"
