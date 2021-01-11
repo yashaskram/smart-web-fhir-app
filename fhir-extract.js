@@ -1,5 +1,5 @@
-(function (window) {
-  window.extractData = function () {
+(function(window) {
+  window.extractData = function() {
     var ret = $.Deferred();
 
     function onError() {
@@ -8,21 +8,19 @@
     }
 
     function onReady(smart) {
-      if (!smart.tokenResponse) {
-        smart_messaging_origin = "dummy";
-      } else {
-        if (!smart.tokenResponse.smart_messaging_origin) {
-          smart_messaging_origin = smart.tokenResponse.smart_messaging_origin;
-        }
+      console.log("<smart>", smart);
 
-        if (
-          !smart_messaging_origin &&
-          !smart.tokenResponse.cerner_smart_messaging_origin
-        ) {
-          smart_messaging_origin =
-            smart.tokenResponse.cerner_smart_messaging_origin; // Cerner specific change for connectathon
-        }
+      smart_messaging_origin = "https://s3.amazonaws.com";
+
+      if (smart.state.tokenResponse.smart_messaging_origin) {
+        smart_messaging_origin = smart.state.tokenResponse.smart_messaging_origin;
       }
+
+      if (smart.state.tokenResponse.cerner_smart_messaging_origin) {
+        smart_messaging_origin =
+          smart.state.tokenResponse.cerner_smart_messaging_origin; // Cerner specific change for connectathon
+      }
+
 
       if (smart.hasOwnProperty("patient")) {
         var patient = smart.patient;
@@ -30,7 +28,7 @@
 
         $.when(pt).fail(onError);
 
-        $.when(pt).done(function (patient) {
+        $.when(pt).done(function(patient) {
           var gender = patient.gender;
 
           var fname = "";
@@ -60,14 +58,22 @@
 
   function defaultPatient() {
     return {
-      fname: { value: "" },
-      lname: { value: "" },
-      gender: { value: "" },
-      birthdate: { value: "" }
+      fname: {
+        value: ""
+      },
+      lname: {
+        value: ""
+      },
+      gender: {
+        value: ""
+      },
+      birthdate: {
+        value: ""
+      }
     };
   }
 
-  window.drawVisualization = function (p) {
+  window.drawVisualization = function(p) {
     $("#holder").show();
     $("#loading").hide();
     $("#fname").html(p.fname);

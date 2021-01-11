@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Static Template</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>SMART Messaging App</title>
+    <link rel="stylesheet" type="text/css" href="fhir-extract.css">
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" type="text/css" href="fhir-extract.css" />
-    <script src="fhir-client.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/node-uuid@1.4.8/uuid.min.js"></script>
     <script src="app.js"></script>
 
     <script>
-      var smart_messaging_origin = "";
+      //var smart_messaging_origin = "https://s3.amazonaws.com";
       //var smart_messaging_origin = window.sessionStorage.smartMessagingOrigin;
 
       var SMART = {
@@ -168,13 +166,12 @@
               payload: payload
             };
 
-            targetWindow =
-              window.parent != window.top ? window.parent : window.opener;
+            targetWindow = window.parent != window.top ? window.parent : window.opener;
             if (!targetWindow) {
               targetWindow = window.parent;
             }
 
-            console.log("Target Opener", targetWindow);
+            //console.log("Target Opener", targetWindow);
             console.log("Sending Message", msgStructure);
             console.log("Smart Messaging Orgin", smart_messaging_origin);
 
@@ -296,8 +293,16 @@
     </script>
   </head>
   <body>
+    <div id="loading">
+  		<h2>Loading Data...</h2>
+  	</div>
     <div id="main" style="display: inline-table;">
       <div id="errors"></div>
+      <div id="loading" class="spinner" style="display:none">
+  			<div class="bounce1"></div>
+  			<div class="bounce2"></div>
+  			<div class="bounce3"></div>
+  		</div>
       <div id="holder">
         <table>
           <tr>
@@ -319,6 +324,8 @@
         </table>
       </div>
       <script src="fhir-extract.js"></script>
+      <script src="fhir-client.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
       <script>
         extractData().then(
@@ -352,7 +359,7 @@
       >
         Send MedicationOrder scratchpad.create
       </button>
-      <button type="button" onclick="javascript:sendUIDone('probelm-list')">
+      <button type="button" onclick="javascript:sendUIDone('problem-list')">
         Send ui.done
       </button>
       <br /><br />
